@@ -34,6 +34,7 @@ public enum SelectedBarAlignment {
     case left
     case center
     case right
+    case word
     case progressive
 }
 
@@ -100,6 +101,29 @@ open class ButtonBarView: UICollectionView {
         targetFrame.size.width += (toFrame.size.width - fromFrame.size.width) * progressPercentage
         targetFrame.origin.x += (toFrame.origin.x - fromFrame.origin.x) * progressPercentage
 
+		if (selectedBarAlignment == .word) {
+            if toIndex < 0 || toIndex > numberOfItems - 1 {
+                if toIndex < 0 {
+                    if let cell = cellForItem(at: IndexPath(item: 0, section: 0)) as? ButtonBarViewCell {
+                        targetFrame.size.width = cell.label.frame.size.width + 24
+                        targetFrame.origin.x += (cell.frame.size.width / 2) - (targetFrame.size.width / 2)
+                    }
+                }
+                else {
+                    if let cell = cellForItem(at: IndexPath(item: numberOfItems - 1, section: 0)) as? ButtonBarViewCell {
+                        targetFrame.size.width = cell.label.frame.size.width + 24
+                        targetFrame.origin.x += (cell.frame.size.width / 2) - (targetFrame.size.width / 2)
+                    }
+                }
+            }
+            else {
+                if let cell = cellForItem(at: IndexPath(item: toIndex, section: 0)) as? ButtonBarViewCell {
+                    targetFrame.size.width = cell.label.frame.size.width + 24
+                    targetFrame.origin.x += (cell.frame.size.width / 2) - (targetFrame.size.width / 2)
+                }
+            }
+        }
+
         selectedBar.frame = CGRect(x: targetFrame.origin.x, y: selectedBar.frame.origin.y, width: targetFrame.size.width, height: selectedBar.frame.size.height)
 
         var targetContentOffset: CGFloat = 0.0
@@ -124,6 +148,11 @@ open class ButtonBarView: UICollectionView {
 
         selectedBarFrame.size.width = selectedCellFrame.size.width
         selectedBarFrame.origin.x = selectedCellFrame.origin.x
+
+		if let cell = cellForItem(at: selectedCellIndexPath) as? ButtonBarViewCell, selectedBarAlignment == .word {
+            selectedBarFrame.size.width = cell.label.frame.size.width + 24
+            selectedBarFrame.origin.x += (selectedCellFrame.size.width / 2) - (selectedBarFrame.size.width / 2)
+        }
 
         if animated {
             UIView.animate(withDuration: 0.3, animations: { [weak self] in
@@ -151,7 +180,7 @@ open class ButtonBarView: UICollectionView {
             alignmentOffset = sectionInset.left
         case .right:
             alignmentOffset = frame.size.width - sectionInset.right - cellFrame.size.width
-        case .center:
+        case .center, .word:
             alignmentOffset = (frame.size.width - cellFrame.size.width) * 0.5
         case .progressive:
             let cellHalfWidth = cellFrame.size.width * 0.5
