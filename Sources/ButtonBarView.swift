@@ -101,25 +101,36 @@ open class ButtonBarView: UICollectionView {
         targetFrame.size.width += (toFrame.size.width - fromFrame.size.width) * progressPercentage
         targetFrame.origin.x += (toFrame.origin.x - fromFrame.origin.x) * progressPercentage
 
-		if (selectedBarAlignment == .word) {
+	if (selectedBarAlignment == .word) {
+            if let fromCell = cellForItem(at: IndexPath(item: fromIndex, section: 0)) as? ButtonBarViewCell {
+                let width = fromCell.label.frame.size.width + 24
+
+                targetFrame.origin.x = fromFrame.midX - (width / 2)
+            }
             if toIndex < 0 || toIndex > numberOfItems - 1 {
                 if toIndex < 0 {
                     if let cell = cellForItem(at: IndexPath(item: 0, section: 0)) as? ButtonBarViewCell {
                         targetFrame.size.width = cell.label.frame.size.width + 24
-                        targetFrame.origin.x += (cell.frame.size.width / 2) - (targetFrame.size.width / 2)
+                        targetFrame.origin.x += (toFrame.origin.x - fromFrame.origin.x) * progressPercentage
                     }
                 }
                 else {
                     if let cell = cellForItem(at: IndexPath(item: numberOfItems - 1, section: 0)) as? ButtonBarViewCell {
                         targetFrame.size.width = cell.label.frame.size.width + 24
-                        targetFrame.origin.x += (cell.frame.size.width / 2) - (targetFrame.size.width / 2)
+                        targetFrame.origin.x += (toFrame.origin.x - fromFrame.origin.x) * progressPercentage
                     }
                 }
             }
             else {
                 if let cell = cellForItem(at: IndexPath(item: toIndex, section: 0)) as? ButtonBarViewCell {
                     targetFrame.size.width = cell.label.frame.size.width + 24
-                    targetFrame.origin.x += (cell.frame.size.width / 2) - (targetFrame.size.width / 2)
+                    targetFrame.origin.x += ((toFrame.midX - (targetFrame.size.width / 2)) - targetFrame.origin.x) * progressPercentage
+
+                }
+                if let fromCell = cellForItem(at: IndexPath(item: fromIndex, section: 0)) as? ButtonBarViewCell {
+                    let width = fromCell.label.frame.size.width + 24
+
+                    targetFrame.size.width = width + ((targetFrame.size.width - width) * progressPercentage)
                 }
             }
         }
