@@ -122,10 +122,13 @@ open class ButtonBarView: UICollectionView {
                 }
             }
             else {
-                if let cell = cellForItem(at: IndexPath(item: toIndex, section: 0)) as? ButtonBarViewCell {
+		if let cell = cellForItem(at: IndexPath(item: toIndex, section: 0)) as? ButtonBarViewCell {
                     targetFrame.size.width = cell.label.frame.size.width + 24
-                    targetFrame.origin.x += ((toFrame.midX - (targetFrame.size.width / 2)) - targetFrame.origin.x) * progressPercentage
-
+                    if (fromIndex == toIndex && toIndex == numberOfItems - 1) {
+                        targetFrame.origin.x += (selectedBar.frame.origin.x - targetFrame.origin.x) * progressPercentage
+                    } else {
+                        targetFrame.origin.x += ((toFrame.midX - (targetFrame.size.width / 2)) - targetFrame.origin.x) * progressPercentage
+                    }
                 }
                 if let fromCell = cellForItem(at: IndexPath(item: fromIndex, section: 0)) as? ButtonBarViewCell {
                     let width = fromCell.label.frame.size.width + 24
