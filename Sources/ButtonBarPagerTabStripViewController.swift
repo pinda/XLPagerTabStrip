@@ -397,7 +397,11 @@ open class ButtonBarPagerTabStripViewController: PagerTabStripViewController, Pa
             var stretchedCellWidths = [CGFloat]()
 
             for minimumCellWidthValue in minimumCellWidths {
-                let cellWidth = (minimumCellWidthValue > generalMinimumCellWidth) ? minimumCellWidthValue : generalMinimumCellWidth
+                var cellWidth = (minimumCellWidthValue > generalMinimumCellWidth) ? minimumCellWidthValue : generalMinimumCellWidth
+                // This is an special exception
+                if (numberOfCells == 4) {
+                    cellWidth = cellWidth - 9
+                }
                 stretchedCellWidths.append(cellWidth)
             }
 
